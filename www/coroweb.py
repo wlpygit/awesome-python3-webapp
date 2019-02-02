@@ -1,3 +1,6 @@
+# 搭建Web框架
+# 由于aiohttp作为一个Web框架比较底层，我们还需要基于aiohttp编写一个更方便处理URL的Web框架。
+
 import asyncio, os, inspect, logging, functools
 
 from urllib import parse
@@ -39,7 +42,7 @@ def get_required_kw_args(fn):
     for name, param in params.items():
         if param.kind == inspect.Parameter.KEYWORD_ONLY and param.default == inspect.Parameter.empty:
             args.append(name)
-        return tuple(args)
+    return tuple(args)
 
 def get_named_kw_args(fn):
     args=[]
@@ -47,7 +50,7 @@ def get_named_kw_args(fn):
     for name, param in params.items():
         if param.kind == inspect.Parameter.KEYWORD_ONLY:
             args.append(name)
-        return tuple(args)        
+    return tuple(args)        
 
 def has_named_kw_args(fn):
     params = inspect.signature(fn).parameters
@@ -94,16 +97,17 @@ class RequestHandler(object):
                 if not request.content_type:
                     return web.HTTPBadRequest('Missing Content-Type.')
                 ct = request.content_type.lower()
-                if ct.startswith('applciation/json'):
-                    params = await request.json() 
+                if ct.startswith('application/json'):
+                    params = await request.json()
                     if not isinstance(params, dict):
-                        return web.HTTPBadRequest('JSON body must be object')
+                        return web.HTTPBadRequest('JSON body must be object.')
                     kw = params
                 elif ct.startswith('application/x-www-form-urlencoded') or ct.startswith('multipart/form-data'):
                     params = await request.post()
                     kw = dict(**params)
                 else:
-                    return web.HTTPBadRequest('Unsupported Content-Type: %s' % request.content_type)    
+                    print('******** Unsupported Content-Type: %s' % request.content_type)
+                    return web.HTTPBadRequest('Unsupported Content-Type: %s' % request.content_type)
             if request.method == 'GET':
                 qs = request.query_string
                 if qs:

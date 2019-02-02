@@ -6,7 +6,7 @@ from aiohttp import web
 from coroweb import get, post
 
 # 分页管理以及调取API时的错误信息
-from apis import Page, APIValueError, APIResourceNotFoundError
+from apis import Page, APIError, APIValueError, APIResourceNotFoundError, APIPermissionError
 from models import User, Comment, Blog, next_id
 from config import configs
 
@@ -76,7 +76,6 @@ async def index(*, page = '1'):
         blogs = []
     else:
         blogs = await Blog.findAll(orderBy='created_at desc', limit=(p.offset, p.limit))
-#    users = await User.findAll()
     return {
         '__template__':'blogs.html',
         'page': p,
@@ -256,6 +255,7 @@ async def api_register_user(*, email, name, passwd):
     if not passwd or not _RE_SHA1.match(passwd):
         raise APIValueError('passwd')
     users = await User.findAll('email=?', [email])
+    print('length of users = ', len(users))
     if len(users) > 0:
         raise APIError('register:failed', 'email', 'Email is already in use.')
     uid = next_id()

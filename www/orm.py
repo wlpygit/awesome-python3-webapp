@@ -91,6 +91,7 @@ class TextField(Field):
 
     def __init__(self, name=None, default=None):
         super().__init__(name, 'text', False, default)
+        
 class ModelMetaclass(type):
 
     def __new__(cls, name, bases, attrs):

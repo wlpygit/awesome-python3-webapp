@@ -23,7 +23,6 @@ class Page(object):
 
     __repr__ = __str__
 
-## 以下为API的几类错误代码
 class APIError(Exception):
     def __init__(self, error, data='', message=''):
         super(APIError, self).__init__(message)
