@@ -135,7 +135,7 @@ async def init(loop):
     await orm.create_pool(loop=loop, **configs.db)
     ## 在handlers.py完全完成后,在下面middlewares的list中加入auth_factory
     app = web.Application(loop=loop, middlewares=[
-        logger_factory, response_factory, auth_factory
+        logger_factory, auth_factory, response_factory
     ])
     init_jinja2(app, filters=dict(datetime=datetime_filter))
     add_routes(app, 'handlers')
